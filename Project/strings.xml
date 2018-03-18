@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">IdleCoders</string>
+    <string name="cash">Cash</string>>
+    <string name="Buy">Buy</string>
+    <string name="upgrades_label">Upgrades</string>>
+    <string name="upgrade1">Upgrade 1</string>>
+    <string name="upgrade2">Upgrade 2</string>>
+    <string name="upgrade3">Upgrade 3</string>>
+    <string name="upgrade4">Upgrade 4</string>>
+</resources>
