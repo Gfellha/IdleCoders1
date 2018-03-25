@@ -3,6 +3,7 @@ package edu.psu.pop5137.idlecoders;
 import android.app.FragmentManager;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -43,7 +44,32 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
             }
         });
 
-        // query db for totalClicks and totalEarned
+        String[] columns = {"totalClicks", "totalEarned"};
+        String selection = "totalClicks = ?";
+        String[] selectionArgs = new String[1];
+        selectionArgs[0] = "H%";
+
+        Cursor c = db.query(
+                "titles",
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if(c.moveToFirst())
+        {
+            currentRow = c.getLong(c.getColumnIndexOrThrow("totalClicks"));
+            TotNumofClick = c.getInt(c.getColumnIndexOrThrow("totalClicks"));
+            c.moveToNext();
+            TotalEarned = c.getInt(c.getColumnIndexOrThrow("totalEarned"));
+        }
+        else {
+            TotNumofClick = 0;
+            TotalEarned = 0;
+        }
     }
 
     @Override
