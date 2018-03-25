@@ -41,19 +41,44 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
             public void onReady(SQLiteDatabase database) {
                 db = database;
             }
-			if(values.get("totalClicks") == null)
+			
+			
+			
+        });
+		SQLiteDatabase db = dbHelper.getReadabeDatabase();
+		
+		String[] columns = {"totalClicks", "totalEarned"}
+		
+		String selection = "totalClicks = ?"
+		
+		String[] selectionArgs = new String[1];
+		
+		selectionArgs[0] = "H%";
+		
+		
+		
+		Cursor c = db.query(
+		"titles",
+		columns,
+		selection,
+		selectionArgs,
+		null,
+		null,
+		null
+		);
+		if(c.moveTofirst())
+			{
+				long itemId = c.getLong(c.getColumnIndexOrThrow("totalClicks"));
+				TotNumofClick = itemId;
+				c.moveToNext();
+				long itemId2 = c.getLong(c.getColumnIndexOrThrow("totalEarned"));
+				TotalEarned = itemId2;
+			}
+			else
 			{
 				TotNumofClick = 0;
 				TotalEarned = 0;
 			}
-			else
-			{
-				TotNumofClick = values.get("totalClicks");
-				TotalEarned = values.get("totalEarned");
-			}
-			
-			
-        });
 
         // query db for totalClicks and totalEarned
     }
