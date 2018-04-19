@@ -19,12 +19,15 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
     long TotNumofClick;  //value will be read in from file, initially will be set to 0
     long TotalEarned;    //value will be read in from file, initially will be set to 0
 
+    TextView Cash;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Button menuBtn = (Button) findViewById(R.id.Menu);
+        Cash = (TextView) findViewById(R.id.Cash);
 
         menuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,54 +40,55 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
     @Override
     protected void onResume() {
         super.onResume();
-        IdleDB.getInstance(this).asyncWritableDatabase(new IdleDB.onDBReadyListener() {
 
-            @Override
-            public void onReady(SQLiteDatabase database) {
+        if(db == null) {
+            IdleDB.getInstance(this).asyncWritableDatabase(new IdleDB.onDBReadyListener() {
 
-                db = database;
+                @Override
+                public void onReady(SQLiteDatabase database) {
 
-                String[] columns = {"totalClicks", "totalEarned"};
+                    db = database;
 
-                Cursor c = db.query(
-                        "game",
-                        columns,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                );
+                    String[] columns = {"totalClicks", "totalEarned"};
 
-                TextView Cash = (TextView) findViewById(R.id.Cash);
+                    Cursor c = db.query(
+                            "game",
+                            columns,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null
+                    );
 
-                if(c.moveToFirst())
-                {
-                    currentRow = c.getLong(c.getColumnIndexOrThrow("totalClicks"));
-                    TotNumofClick = c.getInt(c.getColumnIndexOrThrow("totalClicks"));
-                    c.moveToNext();
-                    TotalEarned = c.getInt(c.getColumnIndexOrThrow("totalEarned"));
-
-                    Cash.setText("Cash: " + Long.toString(TotalEarned));
+                    if (c.moveToFirst()) {
+                        TotNumofClick = c.getLong(c.getColumnIndexOrThrow("totalClicks"));
+                        TotalEarned = c.getLong(c.getColumnIndexOrThrow("totalEarned"));
+                        Cash.setText("Cash: " + Long.toString(TotalEarned));
+                    } else {
+                        TotNumofClick = 0;
+                        TotalEarned = 0;
+                        Cash.setText("Cash: " + Long.toString(TotalEarned));
+                    }
                 }
-                else {
-                    TotNumofClick = 0;
-                    TotalEarned = 0;
-
-                    Cash.setText("Cash: " + Long.toString(TotalEarned));
-                }
-            }
-        });
+            });
+        }
     }
 
     @Override
     protected void onStop() {
-        super.onStop();
         ContentValues values = new ContentValues();
         values.put("totalClicks", TotNumofClick);
         values.put("totalEarned", TotalEarned);
 
-        long newRowId = db.insert("game", null, values);
+        int update = db.update("game", values, null, null);
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        db.close();
+        super.onDestroy();
     }
 
     public void OnClick(View view) {
@@ -105,6 +109,12 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
         startActivity(intent);
     }
 
+    public void onMenuClick() { //Implementation of the interface defined in DialogMenu class
+        FragmentManager manager = getFragmentManager();
+        DialogMenu dialog = new DialogMenu();
+        dialog.show(manager, "MyDialog");
+    }
+}
     public void onMenuClick() { //Implementation of the interface defined in DialogMenu class
         FragmentManager manager = getFragmentManager();
         DialogMenu dialog = new DialogMenu();
