@@ -54,7 +54,7 @@ public class IdleDB extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public void getWritableDatabase(onDBReadyListener listener) {
+    public void asyncWritableDatabase(onDBReadyListener listener) {
         new OpenDbAsyncTask().execute(listener);
     }
 
