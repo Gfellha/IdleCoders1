@@ -16,8 +16,8 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements DialogMenu.DialogListener {
     SQLiteDatabase db;
     long currentRow;
-    int TotNumofClick;  //value will be read in from file, initially will be set to 0
-    int TotalEarned;    //value will be read in from file, initially will be set to 0
+    long TotNumofClick;  //value will be read in from file, initially will be set to 0
+    long TotalEarned;    //value will be read in from file, initially will be set to 0
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,39 +37,44 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
     @Override
     protected void onResume() {
         super.onResume();
-        IdleDB.getInstance(this).getWritableDatabase(new IdleDB.onDBReadyListener() {
+        IdleDB.getInstance(this).asyncWritableDatabase(new IdleDB.onDBReadyListener() {
+
             @Override
             public void onReady(SQLiteDatabase database) {
+
                 db = database;
+
+                String[] columns = {"totalClicks", "totalEarned"};
+
+                Cursor c = db.query(
+                        "game",
+                        columns,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+                TextView Cash = (TextView) findViewById(R.id.Cash);
+
+                if(c.moveToFirst())
+                {
+                    currentRow = c.getLong(c.getColumnIndexOrThrow("totalClicks"));
+                    TotNumofClick = c.getInt(c.getColumnIndexOrThrow("totalClicks"));
+                    c.moveToNext();
+                    TotalEarned = c.getInt(c.getColumnIndexOrThrow("totalEarned"));
+
+                    Cash.setText("Cash: " + Long.toString(TotalEarned));
+                }
+                else {
+                    TotNumofClick = 0;
+                    TotalEarned = 0;
+
+                    Cash.setText("Cash: " + Long.toString(TotalEarned));
+                }
             }
         });
-
-        String[] columns = {"totalClicks", "totalEarned"};
-        String selection = "totalClicks = ?";
-        String[] selectionArgs = new String[1];
-        selectionArgs[0] = "H%";
-
-        Cursor c = db.query(
-                "titles",
-                columns,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-
-        if(c.moveToFirst())
-        {
-            currentRow = c.getLong(c.getColumnIndexOrThrow("totalClicks"));
-            TotNumofClick = c.getInt(c.getColumnIndexOrThrow("totalClicks"));
-            c.moveToNext();
-            TotalEarned = c.getInt(c.getColumnIndexOrThrow("totalEarned"));
-        }
-        else {
-            TotNumofClick = 0;
-            TotalEarned = 0;
-        }
     }
 
     @Override
@@ -91,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
 
         TotalEarned++;
         TotNumofClick++;
-        Cash.setText("Cash: " + Integer.toString(TotalEarned));
+        Cash.setText("Cash: " + Long.toString(TotalEarned));
 
     }
 
