@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements DialogMenu.Dialog
     }
 
     public void OnClick(View view) {
-        TextView Cash = (TextView) findViewById(R.id.Cash);
+        Cash = (TextView) findViewById(R.id.Cash);
 
         if (TotNumofClick == 0) {
             Toast.makeText(this, "You pressed the button for the first time!", Toast.LENGTH_LONG).show();
