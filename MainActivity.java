@@ -10,33 +10,28 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     int TotNumofClick;
     int TotalEarned;
+    
+    Button mainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
+        
+        mainButton = (Button) findViewById(R.id.Incbutton);
+        
+        mainButton.setOnClickListener(new View.OnClickListener() {
+            TextView cash = findViewById(R.id.Cash);
+            
+            if(TotNumofClick == 0)
+                Toast.makeText(this, "You pressed the button for the first time!", Toast.LENGTH_LONG).show();
+            
+            TotalEarned++;
+            TotNumofClick++;
+            Cash.setText("Cash: " + Integer.toString(TotalEarned));
+        });          
     }
-    public void OnClick(View veiw)
-    {
 
-        TextView Cash = findViewById(R.id.Cash);
-
-
-
-        if(TotNumofClick == 0)
-        {
-            Toast.makeText(this, "You pressed the button for the first time!", Toast.LENGTH_LONG).show();
-        }
-
-
-        TotalEarned++;
-        TotNumofClick++;
-        Cash.setText("Cash: " + Integer.toString(TotalEarned));
-
-    }
     public void MenuOnClick(View view)
     {
 
